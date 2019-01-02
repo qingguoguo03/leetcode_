@@ -1,0 +1,80 @@
+# 最简单的方法 直接开辟题目要求的空间 通过列表进行处理
+class MyHashSet(object):
+
+    def __init__(self):
+        """
+        Initialize your data structure here.
+        """
+        self.data = [False]*1000001
+
+    def add(self, key):
+        """
+        :type key: int
+        :rtype: void
+        """
+        if not self.data[key+1]:
+            self.data[key+1] = True
+            
+    def remove(self, key):
+        """
+        :type key: int
+        :rtype: void
+        """
+        if self.data[key+1]:
+            self.data[key+1] = False
+
+    def contains(self, key):
+        """
+        Returns true if this set contains the specified element
+        :type key: int
+        :rtype: bool
+        """
+        
+        return self.data[key+1]
+
+# 为了节省空间,还可以压缩为下面的做法：
+class MyHashSet(object):
+
+    def __init__(self):
+        """
+        Initialize your data structure here.
+        """
+        self.size = 10000
+        self.data = [[] for i in range(self.size)]
+        
+    def has_key(self, key):
+        index = key % self.size
+        bucket = self.data[index]
+        for i, value in enumerate(bucket):
+            if value == key:
+                return i, bucket
+        return -1, bucket
+
+    def add(self, key):
+        """
+        :type key: int
+        :rtype: void
+        """
+        i, bucket =  self.has_key(key) 
+        if i == -1:
+            bucket.append(key)
+            
+    def remove(self, key):
+        """
+        :type key: int
+        :rtype: void
+        """
+        i, bucket =  self.has_key(key) 
+        if i != -1:
+            bucket.remove(key)
+            
+    def contains(self, key):
+        """
+        Returns true if this set contains the specified element
+        :type key: int
+        :rtype: bool
+        """
+        i, bucket =  self.has_key(key) 
+        if i == -1:
+            return False
+        return True
