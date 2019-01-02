@@ -1,0 +1,51 @@
+# 有一个小细节就是：不是说字母数要完全对等，只要单词中的要求字母数大于要求字母数即可
+class Solution(object):
+    def shortestCompletingWord(self, licensePlate, words):
+        """
+        :type licensePlate: str
+        :type words: List[str]
+        :rtype: str
+        """
+        def count_letter(word):
+            counts = {}
+            for letter in word:
+                if letter.isalpha():
+                    letter = letter.lower()
+                    if letter in counts:
+                        counts[letter] += 1
+                    else:
+                        counts[letter] = 1
+            return counts
+        
+        conditions = count_letter(licensePlate)
+        keys = set(conditions.keys())
+        words = [(len(word), word.lower()) for word in words]
+        words = sorted(words, key=lambda words: words[0])
+        for _, word in words:
+            if  keys - set(word):
+                continue
+            word_counts = count_letter(word)
+            flag = True
+            for key in conditions:
+                if conditions[key] >  word_counts[key]:
+                    flag = False
+                    break
+            if not flag:
+                continue
+            return word
+            
+   # 循环单词的时候 看到有人用了内置函数 count 似乎会快一点：
+    for _, word in words:
+            flag = True
+            for key in conditions:
+                if key not in word:
+                    flag = False
+                    break
+                else:
+                    if conditions[key] >  word.count(key):
+                        flag = False
+                        break
+            if not flag:
+                continue
+            return word
+            
