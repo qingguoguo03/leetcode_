@@ -1,0 +1,25 @@
+# 这题也是比较简单的 但是下意识用了函数Counter 其实用数学方法 不需要这样麻烦的 第二种方法比较有技巧
+class Solution(object):
+    def repeatedNTimes(self, A):
+        """
+        :type A: List[int]
+        :rtype: int
+        """
+        from collections import Counter
+        a = Counter(A)
+        return a.most_common()[0][0]
+        
+# 第二种
+class Solution(object):
+    def repeatedNTimes(self, A):
+        """
+        :type A: List[int]
+        :rtype: int
+        """
+        a = set()
+        for i in A:
+            if i in a:
+                return i
+            else:
+                a.add()
+        
