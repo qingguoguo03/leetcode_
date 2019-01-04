@@ -1,0 +1,25 @@
+# 也是比较简单的题目
+class Solution(object):
+    def isAlienSorted(self, words, order):
+        """
+        :type words: List[str]
+        :type order: str
+        :rtype: bool
+        """
+        dct = dict(zip(order, range(1,27)))
+        i = 0
+        while i <= len(words)-2:
+            word1 = words[i]
+            word2 = words[i+1]
+            for j in range(len(word1)):
+                try:
+                    if dct[word1[j]]>dct[word2[j]]:
+                        return False
+                    elif dct[word1[j]]<dct[word2[j]]:
+                        break
+                    else:
+                        continue
+                except:
+                    return False
+            i += 1
+        return True
