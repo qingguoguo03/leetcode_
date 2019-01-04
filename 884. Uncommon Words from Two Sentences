@@ -1,0 +1,11 @@
+# 这题比较简单 当然也可以自己写一个dict，特点就是A B不需要分开统计 放在一起就可以
+class Solution(object):
+    def uncommonFromSentences(self, A, B):
+        """
+        :type A: str
+        :type B: str
+        :rtype: List[str]
+        """
+        from collections import Counter
+        return [key for key, value in Counter(A.split()+B.split()).items() if value == 1]
+        
