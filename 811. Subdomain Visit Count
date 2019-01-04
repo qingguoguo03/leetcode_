@@ -1,0 +1,19 @@
+# 这题比较简单，统计次数
+class Solution(object):
+    def subdomainVisits(self, cpdomains):
+        """
+        :type cpdomains: List[str]
+        :rtype: List[str]
+        """
+        count = {}
+        for domain in cpdomains:
+            num, address = domain.split()
+            num = int(num)
+            addrs = address.split('.')
+            for i in range(len(addrs)):
+                items = addrs[i:]
+                addr = '.'.join(items)
+                count[addr] = count.get(addr, 0) + num
+        res = [' '.join([str(num), addr]) for addr, num in count.items()]
+        return res
+        
