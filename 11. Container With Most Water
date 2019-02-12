@@ -1,0 +1,20 @@
+# 左右两个指针 每次移动高度较小的边
+class Solution(object):
+    
+    def maxArea(self, height):
+        """
+        :type height: List[int]
+        :rtype: int
+        """
+        if len(height)<2:
+            return 0
+        left  = 0
+        right = len(height)-1
+        maxarea = 0
+        while left < right:
+            maxarea = max(maxarea, (right-left)*min(height[left], height[right]))
+            if height[left]> height[right]:
+                right -= 1
+            else:
+                left += 1
+        return maxarea
