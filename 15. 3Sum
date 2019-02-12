@@ -1,0 +1,60 @@
+# 第一种方法比较直接 就是判断两个数之外第三个数是否存在
+class Solution(object):
+    def threeSum(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
+        if len(nums) < 3:
+            return []
+        nums.sort()
+        res = set()
+        for i, v in enumerate(nums[:-2]):
+            if v > 0: # 至少要有非负数
+                break
+            if i >= 1 and v == nums[i-1]: # 不做重复的数字
+                continue
+            d = {}
+            for x in nums[i+1:]:
+                if x > -v*2: # 数字过大超过2倍不可能成立
+                    break
+                if x not in d:
+                    d[-v-x] = 1
+                elif x in d:
+                    res.add((v, -v-x, x))
+                else:
+                    break
+        return list(map(list, res))
+
+# 第二种方法是下意识想到的做法，但是这个来自参考，个人想法把正数与负数分开处理，实际上并不需要
+class Solution(object):
+    def threeSum(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
+        num_dict = {}
+        result = []
+        for i in nums:
+            if i in num_dict:
+                num_dict[i] += 1
+            else:
+                num_dict[i] = 1
+        pos = [i for i in num_dict if i>0]
+        neg = [i for i in num_dict if i<0]
+        neg.sort()
+        
+        if 0 in num_dict and num_dict[0]>=3:
+            result.append([0,0,0])
+        for i in pos:
+            for j in neg:
+                k = -i-j
+                if k in num_dict:
+                    if(k==i or k==j) and num_dict[k]>=2:
+                        result.append([j,k,i])
+                    elif j<k<i:
+                        result.append([j,k,i])
+                    if k<j:
+                        break
+        return result
+    
