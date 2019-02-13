@@ -1,0 +1,30 @@
+# 刚开始想复杂了 主要是 两种情况落在 顺序的一边 还是混乱的一边，顺序的一边 则就是二分查找 所以不需要考虑混乱的 考虑顺序的会简单一点
+class Solution:
+    # @param {integer[]} numss
+    # @param {integer} target
+    # @return {integer}
+    def search(self, nums, target):
+        if not nums:
+            return -1
+
+        low, high = 0, len(nums) - 1
+
+        while low <= high:
+            #mid = (low + high) // 2
+            mid = low+high >> 1
+            if target == nums[mid]:
+                return mid
+
+            if nums[low] <= nums[mid]: # 一定是顺序的
+                if nums[low] <= target <= nums[mid]:
+                    high = mid - 1
+                else: # target 不满足条件
+                    low = mid + 1
+            else: # 没有按照顺序 那么mid 到high 就是按照顺序的
+                if nums[mid] <= target <= nums[high]:
+                    low = mid + 1
+                else: # target 不满足条件
+                    high = mid - 1
+
+        return -1
+    
