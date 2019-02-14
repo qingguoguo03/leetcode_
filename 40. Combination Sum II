@@ -1,0 +1,37 @@
+
+# 特别开心 我这个是100%的结果
+class Solution(object):
+    def combinationSum2(self, candidates, target):
+        """
+        :type candidates: List[int]
+        :type target: int
+        :rtype: List[List[int]]
+        """
+        res = []
+        nums = sorted(candidates)
+        lens = len(nums)
+        def dfs(nums, index, target, path, res):
+            
+            if target == 0:
+                res.append(path)
+                return
+            
+            if target < 0:
+                return
+            
+            if index == 0 and not path:
+                i = index
+            else:
+                i = index+1
+            while i<lens:
+                if nums[i]> target:
+                    break
+                dfs(nums, i, target-nums[i], path+[nums[i]], res)
+                if i+1 == lens:
+                    break
+                while i<lens-1 and nums[i] == nums[i+1]:
+                    i += 1
+                i += 1
+        dfs(nums, 0, target, [], res)
+        return res
+        
