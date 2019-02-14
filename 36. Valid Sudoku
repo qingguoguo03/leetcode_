@@ -1,0 +1,49 @@
+
+# 自己的方法比较浪费空间 但是效率也是100% 
+class Solution(object):
+    def isValidSudoku(self, board):
+        """
+        :type board: List[List[str]]
+        :rtype: bool
+        """
+        row = [{},{},{},{},{},{},{},{},{}]
+        col = [{},{},{},{},{},{},{},{},{}]
+        box = [{},{},{},{},{},{},{},{},{}]
+        for i in range(9):
+            for j in range(9):
+                num = board[i][j] 
+                if num == '.':
+                    continue
+                if num in row[i]:
+                    return False
+                else:
+                    row[i][num] = 1
+                if num in col[j]:
+                    return False
+                else:
+                    col[j][num] = 1
+                index = (i // 3) * 3 + (j // 3)
+                if num in box[index]:
+                    return False
+                else:
+                    box[index][num] = 1
+        return True
+        
+# 上面是index 作为bag 下面是按照坐标来的做
+class Solution(object):
+    def isValidSudoku(self, board):
+        """
+        :type board: List[List[str]]
+        :rtype: bool
+        """
+        big = set()
+        for i in range(0,9):
+            for j in range(0,9):
+                if board[i][j]!='.':
+                    cur = board[i][j] # 读入是字符串 不然这里要转为字符串 不然下面的判断存在问题
+                    if (i,cur) in big or (cur,j) in big or (i/3,j/3,cur) in big:
+                        return False
+                    big.add((i,cur))
+                    big.add((cur,j))
+                    big.add((i/3,j/3,cur))
+        return True
