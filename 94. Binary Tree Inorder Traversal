@@ -1,0 +1,22 @@
+
+# 这个是递归的方式 差不多也能100% 在题解中有个迭代的方法很有趣 利用压栈的思想，很有趣 
+
+class Solution(object):
+    def inorderTraversal(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[int]
+        """
+        # recursive method
+        output = []
+        def dfs(root, output):
+            if not root:
+                return
+            if root.left:
+                dfs(root.left, output)
+            output.append(root.val)
+            if root.right:
+                dfs(root.right, output)
+        dfs(root, output)
+        return output
+        
