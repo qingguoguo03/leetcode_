@@ -1,0 +1,113 @@
+
+# 主要是利用堆的思想去查找中位数 
+# 直接使用Python现有的堆结构，注意大根堆与小根堆，默认是小根堆，变成大根堆则就是去负号
+# 题目的思想就是大根堆root与小根堆root记录中位数，如果二者不平衡在需要进行调整
+# 自己写的话，可以写个比较器，解决大根堆小根堆问题
+import heapq
+class MedianFinder(object):
+
+    def __init__(self):
+        """
+        initialize your data structure here.
+        """
+        self.heaps = [],[]
+        
+
+    def addNum(self, num):
+        """
+        :type num: int
+        :rtype: None
+        """
+        # 这里要考虑到正数与负数的情况
+        small, large = self.heaps
+        # 进入大根堆 弹出一个给小根堆
+#        heapq.heappush(large, num)
+#        heapq.heappush(small, -heapq.heappop(large))
+        heapq.heappush(small, -heapq.heappushpop(large, num))
+        if len(small) > len(large)+1:
+            heapq.heappush(large, -heapq.heappop(small))
+
+    def findMedian(self):
+        """
+        :rtype: float
+        """
+        small, large = self.heaps
+        return (-small[0]+large[0])/2.0 if len(small) == len(large) else -small[0]
+
+
+# 自己实现堆结构 的一个方法：
+def median_finder(arr):
+    
+    def swap(arr, index1, index2):
+        arr[index1], arr[index2] = arr[index2], arr[index1]
+        
+    def heapinsert(arr, index, func):
+        while index:
+            parent_index = (index-1)>>1
+            if not func(arr[parent_index],arr[index]):
+                swap(arr, parent_index, index)
+                index = parent_index
+            else:
+                break
+            
+    def heapify(arr, index, heapsize, func):
+        left = index*2 + 1
+        while left<heapsize:
+            change_index = left + 1 if left+1<heapsize and func(arr[left+1], arr[left]) else left
+            change_index = index if func(arr[index], arr[change_index]) else change_index
+            if change_index == index:
+                break
+            swap(arr, change_index, index)
+            index = change_index
+            left = index*2 + 1
+            
+        
+    length = len(arr)
+    if not arr:
+        return 
+    if length<2:
+        return arr[0]
+    maxheap = [] # 大根堆
+    minheap = [] # 小根堆
+    max_len = min_len = 1
+    i,j = (0,1) if arr[0]>=arr[1] else (1,0)
+    maxheap.append(arr[j])
+    minheap.append(arr[i])
+    fmax = lambda x1,x2: True if x1>=x2 else False
+    fmin = lambda x1,x2: True if x1<=x2 else False
+    
+    def heap_add(heap, value, heapsize, func):
+        try:
+            heap[heapsize] = value
+        except:
+            heap.append(value)
+        heapinsert(heap, heapsize, func)
+        
+    for i in range(2, length):
+        if arr[i]<=maxheap[0] or (arr[i]>maxheap[0] and arr[i]<minheap[0] and max_len <= min_len):
+            heap_add(maxheap, arr[i], max_len, fmax)
+            max_len += 1
+        elif arr[i]>=minheap[0] or (arr[i]>maxheap[0] and arr[i]<minheap[0] and max_len > min_len):
+            heap_add(minheap, arr[i], min_len, fmin)
+            min_len += 1
+       
+        # 调整两个堆的大小
+        if max_len > min_len + 1:
+            heap_add(minheap, maxheap[0], min_len, fmin)
+            min_len += 1
+            max_len -= 1
+            swap(maxheap, 0, max_len)
+            heapify(maxheap, 0, max_len, fmax)
+        if min_len > max_len + 1:
+            heap_add(maxheap, minheap[0], max_len, fmax) 
+            max_len += 1
+            min_len -= 1
+            swap(minheap, 0, min_len)
+            heapify(minheap, 0, min_len, fmin)
+#        print(maxheap[:max_len], 'maxheap')
+#        print(minheap[:min_len], 'minheap')
+    if length%2:
+        ans = maxheap[0] if max_len > min_len else minheap[0]
+    else:
+        ans = (maxheap[0] + minheap[0])/2
+    return ans, maxheap[:max_len], minheap[:min_len]
