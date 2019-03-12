@@ -1,2 +1,90 @@
 
 # 第一个方法就是中规中矩地用前缀树来做的 效率不是很高 用到了递归的方法..
+class TrieNode(object):
+    def __init__(self, path=0, end=0):
+        self.path = path
+        self.end = end
+        self.next = {}
+
+class WordDictionary:
+
+    def __init__(self):
+        """
+        Initialize your data structure here.
+        """
+        self.root = TrieNode()
+
+    def addWord(self, word: str) -> None:
+        """
+        Adds a word into the data structure.
+        """
+        word = word.strip()
+        if not word:
+            return
+        cur = self.root
+        for w in word:
+            if w not in cur.next:
+                cur.next[w] = TrieNode()
+            cur.path += 1
+            cur = cur.next[w]
+        cur.end += 1
+               
+    def search(self, word: str) -> bool:
+        """
+        Returns if the word is in the data structure. A word could contain the dot character '.' to represent any one letter.
+        """
+        word = word.strip()
+        if not word:
+            return
+      
+        def dfs(word, cur):
+            if len(word)==1 and word in cur.next and cur.next[word].end>=1:
+                return True
+            for i,w in enumerate(word):
+                if w == '.':
+                    for w1 in cur.next:
+                        if dfs(word[i+1:], cur.next[w1]):
+                            return True
+                    return False
+                else:
+                    if w in cur.next:
+                        cur = cur.next[w]
+                    else:
+                        return False
+            return True if cur.end != 0 else False
+    
+        # 递归处理
+        return dfs(word, self.root)
+        
+        
+ # 看到一个比较聪明的做法 跳出前缀树这个思想，直接就是集合来做
+
+                 from collections import defaultdict
+class WordDictionary:
+
+    def __init__(self):
+        """
+        Initialize your data structure here.
+        """
+        self.dct = defaultdict(set) # 不同长度的单词词典
+
+    def addWord(self, word: str) -> None:
+        """
+        Adds a word into the data structure.
+        """
+        self.dct[len(word)].add(word)
+
+    def search(self, word: str) -> bool:
+        """
+        Returns if the word is in the data structure. A word could contain the dot character '.' to represent any one letter.
+        """
+        bag = self.dct[len(word)]
+        if '.' not in word:
+            return word in bag
+        for i,w in enumerate(word):
+            if w == '.':
+                continue
+            bag = {tmp for tmp in bag if tmp[i]==w} # 细节： bag的赋值问题！！！！！
+            if not bag:
+                return False
+        return True if bag else False       
