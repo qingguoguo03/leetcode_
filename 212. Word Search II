@@ -1,9 +1,48 @@
 
+# 前缀树加上递归
+class Trie(object):
+    def __init__(self):
+        self.next = {}
+        self.string = '' # 存查找的字符串
+        
 
-I first build the tree of words with root root and also represent the board a different way, namely as one-dimensional dictionary where the keys are complex numbers representing the row/column indexes. That makes further work with it easier. Looping over all board positions is just for z in board, the four neighbors of a board position z are just z + 1j**k (for k in 0 to 3), and I don't need to check borders because board.get just returns "None" if I request an invalid position.
-
-After this preparation, I just take the tree and recursively dive with it into each board position. Similar to how you'd search a single word, but with the tree instead.
-
+class Solution:
+    def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+        # 前缀树+递归查找
+        root = Trie()
+        for word in words:
+            cur = root
+            for w in word:
+                if w not in cur.next:
+                    cur.next[w] = Trie()
+                cur = cur.next[w]
+            cur.string = word
+        
+        def dfs(i, j, cur):
+            
+            if cur.string:                #这个判断条件必须加在后面这个判断之前，特例['a']
+                ans.append(cur.string)
+                cur.string = ''
+                
+            if i<0 or i>= m or j<0 or j>=n:
+                return
+            
+            if board[i][j] in cur.next:
+                # print('dfs:', board[i][j])
+                tmp, board[i][j] = board[i][j], '#'
+                for ii, jj in [(i+1, j),(i-1, j),(i, j+1),(i, j-1)]:
+                    dfs(ii, jj, cur.next[tmp])
+                board[i][j] = tmp
+        
+        
+        ans = []
+        m, n = len(board), len(board[0])
+        for i in range(m):
+            for j in range(n):
+                dfs(i, j, root)
+        return ans
+        
+# 下面是一个大神的做法： 巧用复数的思想 把边界问题都解决了 很聪明
 class Solution:
     def findWords(self, board, words):
 
