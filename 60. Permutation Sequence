@@ -37,3 +37,26 @@ class Solution:
         dfs(nums, k, dct, res)
         return ''.join(res)
         
+# 简化一下上面的方法 改变边界条件 可以减少判断..
+from functools import reduce
+class Solution:
+    def getPermutation(self, n: int, k: int) -> str:
+        
+        nums = list(map(str, range(1, n+1)))
+        if n != 1:
+            factor = reduce(lambda x,y: x*y, range(1,n)) 
+        else:
+            factor = 1
+        k -= 1 # 这样的话 就不用像上面去判断落在哪一个窗口
+        res = ''
+        for i in range(n-1, 0, -1):
+            if not nums:
+                break
+            res += nums[int(k//factor)]
+            #print('res:', res, factor, k, int(k//factor), nums)
+            nums.remove(nums[int(k//factor)])
+            k = int(k % factor)
+            factor /= i
+        return res+ nums[-1] if nums else ''
+        
+        
