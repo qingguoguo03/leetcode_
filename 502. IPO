@@ -1,0 +1,69 @@
+
+# 两种方法，堆的方法更加通用，另外一种就是排序从后往前筛选
+import heapq
+
+class Node(object):
+    def __init__(self, cost, profit):
+        self.cost = cost
+        self.profit = profit
+
+class Heap(object):
+    def __init__(self, initial=None, key=lambda x: x):
+        self.key= key
+        if initial: # 表示列表转成堆
+            self._data = [(key(item), i, item) for i,item in enumerate(initial)]
+            heapq.heapify(self._data)
+        else:
+            self._data = initial if initial is not None else []
+        
+            
+    def push(self, item):
+        i = len(self._data)
+        heapq.heappush(self._data, (self.key(item), i, item))
+        i += 1
+        
+    def pop(self):
+        return heapq.heappop(self._data)[-1]
+        
+    def empty(self):
+        return True if not self._data else False
+    
+    def peek(self):
+        return self._data[0][-1]
+        
+class Solution:
+    def findMaximizedCapital(self, k: int, W: int, Profits: List[int], Capital: List[int]) -> int:
+        nodes = []
+        for i in range(len(Capital)):
+            nodes.append(Node(Capital[i], Profits[i]))
+        costheap = Heap(initial=nodes, key=lambda x: x.cost) 
+        profitheap = Heap(initial=[], key=lambda x: -x.profit)
+        for i in range(k):
+            while not costheap.empty() and costheap.peek().cost <= W:
+                c = costheap.pop()
+                #print(c.cost, c.profit)
+                profitheap.push(c)
+            if profitheap.empty():
+                return W
+            cur = profitheap.pop()
+            #print(i, cur.cost, cur.profit)
+            W += cur.profit
+        return W
+    
+    
+  # 就这道题而言下面这个效率会更高很多 因为排序一遍即可 如果要重复排序 下面这个做法可能不大合适
+  class Solution:
+    def findMaximizedCapital(self, k: int, W: int, Profits: List[int], Capital: List[int]) -> int:
+        num = [x for x in zip(Profits, Capital)]
+        num.sort() # 直接就是成本最小排序，收益最大排序
+        # 找到第一个满足收益最大 但是成本并不超过的项目即可
+        while k and num:
+            i = len(num)-1
+            while i>=0 and num[i][1]>W:
+                i -= 1
+            if i<0:
+                return W
+            W += num[i][0]
+            num.pop(i) # 这个操作完后就把这个pop出来 不继续操作
+            k -= 1
+        return W
