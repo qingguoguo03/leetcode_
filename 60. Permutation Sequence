@@ -1,0 +1,39 @@
+
+# 下意识采用了递归做法
+class Solution:
+    def getPermutation(self, n: int, k: int) -> str:
+        
+        # 先算出一个 然后除以之后看落在哪个空间 然后循环操作
+     
+        nums = [str(i) for i in range(1, n+1)]
+        dct = {0:1}
+        for i in range(1, n+1):
+            dct[i] = dct[i-1]*i
+        #print(nums, dct)
+        res = []
+        def dfs(nums, k, dct, res):
+            if not nums:
+                return
+            n = len(nums)
+            if  k == 1:
+                res.extend(nums)
+                return
+            if dct[n] == k:
+                res.extend(sorted(nums, reverse=True))
+                return
+            i, j = k // dct[n-1], k % dct[n-1] # 表示落在第几个窗口， 然后这个窗口的第几个
+            #print(dct[n-1], i, j)
+            if j: # 如果存在余数 说明落在了后面的窗口上
+                res.append(nums[i])
+                #print(nums[i])
+                nums.remove(nums[i])
+                #print(nums)
+                dfs(nums, j, dct, res)
+            else: # 不存在余数 说明在前面的窗口
+                res.append(nums[i-1])
+                nums.remove(nums[i-1])
+                res.extend(sorted(nums, reverse=True))
+                return
+        dfs(nums, k, dct, res)
+        return ''.join(res)
+        
