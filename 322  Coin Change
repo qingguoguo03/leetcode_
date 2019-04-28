@@ -21,3 +21,25 @@ class Solution:
         return dp[amount] if dp[amount]!=math.inf else -1    
     
     
+# 效率比较高的 一种比较聪明的做法  
+class Solution:
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        
+        coins = sorted(coins, reverse=True)
+        result = amount+1
+        import math
+        def get_min_count_num(index, target, count):
+            nonlocal result
+            if index == len(coins) or (count + math.ceil(target/coins[index]) >= result):
+                return False
+            if target%coins[index] == 0:
+                result = count + target//coins[index]
+                return True
+            
+            for i in range(target//coins[index], -1, -1):
+                if get_min_count_num(index+1, target-i*coins[index], count+i):
+                    return
+                
+            
+        get_min_count_num(0, amount, 0)
+        return result if result<amount+1 else -1
