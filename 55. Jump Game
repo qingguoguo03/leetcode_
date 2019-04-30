@@ -1,0 +1,15 @@
+# 刷背包问题网上提到了这道题，死活都在想怎么背包做，最后发现不用背包就可以解决了
+class Solution:
+    def canJump(self, nums: List[int]) -> bool:
+        
+        if not nums:
+            return False
+        n = len(nums)
+        max_last = 0
+        for i in range(0, n):
+            max_last = max(max_last, i+nums[i])
+            if max_last>=n-1:
+                return True
+            if max_last<= i:
+                return False
+        
