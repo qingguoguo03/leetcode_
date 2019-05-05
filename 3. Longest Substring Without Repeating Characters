@@ -1,0 +1,44 @@
+
+# 题目想复杂了，看题解实时判断其实效率会更高，另外巧利用 cur_index-first_index 去重
+
+class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        dct = {}
+        max_len = 0
+        cur_index = first = 0
+        lens = len(s) # 提前跳出判断
+        if not lens: return 0
+        for cur_index, char in enumerate(s):
+            index =  dct.get(char, -1)
+            if index >= first:
+                max_len = max(max_len, cur_index-first)
+                first = index+1
+                if lens-first <= max_len: # 提前跳出判断
+                    break
+            dct[char] = cur_index
+        if s[first] != s[-1] or (lens==1): # 特殊情况 从first开始一直都没有重复
+            max_len = max(max_len, cur_index-first+1)
+        return max_len 
+
+
+# 这种方法看上去就很简洁，测试的时候效率略低于上面的
+class Solution:
+    
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        if not s:
+            return 0
+        
+        dic={}
+        max = 0
+        start = -1
+        
+        for i,v in enumerate(s):
+            if v in dic and dic[v]>start:
+                start = dic[v] # start虽然是重复位置的index，但是减去之后并不会多算入这个值
+                dic[v] = i   
+            else:
+                dic[v] = i
+                if i-start>max: # 实时做判断
+                    max=i-start
+            
+        return max
